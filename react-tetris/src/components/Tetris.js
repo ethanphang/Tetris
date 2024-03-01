@@ -51,7 +51,7 @@ const Tetris = () => {
 
     // Function to drop the player tetromino down
     const drop = () => {
-        if (rows > (level + 1)* 10){
+        if (rows > (level + 1) * 10) {
             setLevel(prev => prev + 1);
             setDropTime(1000 / (level + 1) + 200);
         }
@@ -70,7 +70,7 @@ const Tetris = () => {
 
     const keyUp = ({ keyCode }) => {
         if (!gameOver) {
-            if (keyCode === 40){
+            if (keyCode === 40) {
                 setDropTime(1000 / (level + 1) + 200);
             }
         }
@@ -81,6 +81,25 @@ const Tetris = () => {
         setDropTime(null);
         drop();
     }
+
+    const dropPlayerToBottom = () => {
+        let didCollide = false;
+        while (!didCollide) {
+          // Check if moving down would cause a collision, including hitting the bottom of the grid
+          if (!checkCollision(player, stage, { x: 0, y: 1 })) {
+            // Move the piece down by incrementing its Y position
+            player.pos.y += 1;
+          } else {
+            didCollide = true; // Collision detected, break the loop
+          }
+        }
+        updatePlayerPos({ x: 0, y: 0, collided: true }); // Final update with collision to lock the piece in place
+      };
+      
+      
+    
+      
+
 
     // Function to handle player movement based on key inputs
     const move = ({ keyCode }) => {
@@ -93,11 +112,13 @@ const Tetris = () => {
                 dropPlayer();
             } else if (keyCode === 38) {
                 playerRotate(stage, 1);
-            }
+            } else if (keyCode === 32) { // Space bar
+                dropPlayerToBottom();
+              }
         }
     }
 
-    useInterval( () => {
+    useInterval(() => {
         drop();
     }, dropTime)
     // Render the Tetris game
