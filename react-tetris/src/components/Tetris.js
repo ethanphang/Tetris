@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 
 import { createStage, checkCollision } from '../gameHelpers';
-//Custom Hooks
+
+// Styled Components
+import { StyledTetrisWrapper, StyledTetris } from './styles/StyledTetris';
+
+// Custom Hooks
 import { usePlayer } from '../hooks/usePlayer';
 import { useStage } from '../hooks/useStage';
 
 // Components
 import Stage from './Stage';
 import Display from './Display';
-import StartButton from './StartButton'
-
-// Styled Components
-import { StyledTetrisWrapper, StyledTetris } from './styles/StyledTetris';
-
+import StartButton from './StartButton';
 
 
 /**
@@ -25,7 +25,7 @@ const Tetris = () => {
     const [gameOver, setGameOver] = useState(false);
 
     // Custom hooks for managing player and stage state
-    const [player, updatePlayerPos, resetPlayer] = usePlayer();
+    const [player, updatePlayerPos, resetPlayer, playerRotate] = usePlayer();
     const [stage, setStage] = useStage(player, resetPlayer);
 
     // Function to move the player left or right
@@ -33,58 +33,57 @@ const Tetris = () => {
         if (!checkCollision(player, stage, { x: dir, y: 0 })) {
             updatePlayerPos({ x: dir, y: 0 });
         }
-    };
+    }
 
     // Function to start the game
     const startGame = () => {
-        // Reset the stage and player
+        // Reset everything
         setStage(createStage());
         resetPlayer();
         setGameOver(false);
-    };
+    }
 
     // Function to drop the player tetromino down
     const drop = () => {
         if (!checkCollision(player, stage, { x: 0, y: 1 })) {
-            updatePlayerPos({ x: 0, y: 1, collided: false });
+            updatePlayerPos({ x: 0, y: 1, collided: false })
         } else {
+            // Game Over
             if (player.pos.y < 1) {
+                console.log("GAME OVER!!!");
                 setGameOver(true);
-                setDropTime(null)
+                setDropTime(null);
             }
-            updatePlayerPos({ x: 0, y: 0, collided: true })
+            updatePlayerPos({ x: 0, y: 0, collided: true });
         }
-    };
+    }
 
     // Function to handle dropping the player tetromino
     const dropPlayer = () => {
         drop();
-    };
+    }
 
     // Function to handle player movement based on key inputs
     const move = ({ keyCode }) => {
         if (!gameOver) {
             if (keyCode === 37) {
-                // Left arrow key pressed
                 movePlayer(-1);
             } else if (keyCode === 39) {
-                // Right arrow key pressed
                 movePlayer(1);
             } else if (keyCode === 40) {
-                // Down arrow key pressed
                 dropPlayer();
+            } else if (keyCode === 38) {
+                playerRotate(stage, 1);
             }
         }
-    };
+    }
 
     // Render the Tetris game
     return (
         <StyledTetrisWrapper role="button" tabIndex="0" onKeyDown={e => move(e)}>
             <StyledTetris>
-                {/* Render the game stage */}
                 <Stage stage={stage} />
                 <aside>
-                    {/* Render game over message or game stats */}
                     {gameOver ? (
                         <Display gameOver={gameOver} text="Game Over" />
                     ) : (
@@ -94,7 +93,6 @@ const Tetris = () => {
                             <Display text="Level" />
                         </div>
                     )}
-                    {/* Render the start button */}
                     <StartButton callback={startGame} />
                 </aside>
             </StyledTetris>
