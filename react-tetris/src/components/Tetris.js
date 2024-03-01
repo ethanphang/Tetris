@@ -114,7 +114,10 @@ const Tetris = () => {
                 playerRotate(stage, 1);
             } else if (keyCode === 32) { // Space bar
                 dropPlayerToBottom();
-              }
+            } else if (keyCode === 82) { // Space bar
+                startGame(); 
+            }
+
         }
     }
 
