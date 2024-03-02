@@ -87,6 +87,7 @@ const Tetris = () => {
         while (!didCollide) {
           // Check if moving down would cause a collision, including hitting the bottom of the grid
           if (!checkCollision(player, stage, { x: 0, y: 1 })) {
+            console.log('1')
             // Move the piece down by incrementing its Y position
             player.pos.y += 1;
           } else {
@@ -102,7 +103,8 @@ const Tetris = () => {
 
 
     // Function to handle player movement based on key inputs
-    const move = ({ keyCode }) => {
+    const move = (e) => {
+        const { keyCode } = e;
         if (!gameOver) {
             if (keyCode === 37) {
                 movePlayer(-1);
@@ -113,6 +115,7 @@ const Tetris = () => {
             } else if (keyCode === 38) {
                 playerRotate(stage, 1);
             } else if (keyCode === 32) { // Space bar
+                e.preventDefault(); // Prevent any default action associated with the space bar
                 dropPlayerToBottom();
             } else if (keyCode === 82) { // Space bar
                 startGame(); 
